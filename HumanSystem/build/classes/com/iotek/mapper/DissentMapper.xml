@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iotek.dao.DissentDao">
+    <resultMap id="dissentMap" type="Dissent">
+        <id property="did" column="did"/>
+        <result property="excuse" column="excuse"/>
+        <result property="month" column="month"/>
+
+        <association property="employee" javaType="Employee">
+            <id property="eid" column="eid"/>
+            <result property="ename" column="ename"/>
+            <result property="sex" column="sex"/>
+            <result property="age" column="age"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="state" column="state"/>
+        </association>
+    </resultMap>
+    <select id="getAllDissent" resultMap="dissentMap">
+        select employee.*,dissent.* from dissent,employee where dissent.eid=employee.eid
+    </select>
+    <insert id="addDissent" parameterType="Dissent">
+        insert into dissent(excuse,month,eid) values(#{excuse},#{month},#{employee.eid})
+    </insert>
+</mapper>

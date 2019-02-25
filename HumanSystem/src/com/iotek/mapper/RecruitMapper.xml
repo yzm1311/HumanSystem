@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iotek.dao.RecruitDao">
+    <resultMap id="recruitMap" type="Recruit">
+        <id property="reid" column="reid"/>
+        <result property="rname" column="rname"/>
+        <result property="address" column="address"/>
+        <result property="grantTime" column="grantTime" />
+        <result property="description" column="description"/>
+        <result property="state" column="state"/>
+
+        <association property="post" javaType="Post">
+            <id property="pid" column="pid"/>
+            <result property="pname" column="pname"/>
+        </association>
+
+    </resultMap>
+    <insert id="addRecruit" parameterType="Recruit">
+        insert into recruit(rname,address,grantTime,description,pid,state) values(#{rname},#{address},#{grantTime},#{description},#{post.pid},0)</insert>
+    <delete id="deleteRecruit" parameterType="int">
+        delete from recruit where reid=#{reid}
+    </delete>
+
+    <update id="updateRecruit" parameterType="Recruit">
+        update recruit set state=#{state} where reid=#{reid}
+    </update>
+    
+    <update id="updateRec" parameterType="Recruit">
+     update recruit set rname=#{rname},address=#{address},grantTime=#{grantTime},description=#{description} where reid=#{reid}
+    </update>
+
+    <select id="getAll" resultMap="recruitMap">
+        select recruit.*,post.* from recruit,post where recruit.pid=post.pid
+    </select>
+    <select id="getRecruitByReid" resultType="int" resultMap="recruitMap">
+        select recruit.*,post.* from recruit,post where recruit.pid=post.pid and reid=#{reid}
+    </select>
+
+   
+</mapper>

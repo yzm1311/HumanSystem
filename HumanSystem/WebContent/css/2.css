@@ -1,0 +1,50 @@
+ul, li {
+	/*���ul��li��Ĭ�ϵ�СԲ��*/
+	list-style: none;
+}
+ul {
+	/*����Ӳ˵�������ֵ*/
+	padding: 0;
+	margin: 0;
+}
+.main, .hmain {
+	background-image: url(../images/title.gif);
+	background-repeat: repeat-x;
+	width: 120px;
+}
+li {
+	background-color: #EEEEEE;
+}
+a {
+	/*ȡ�����е��»���*/
+	text-decoration: none;
+	padding-left: 10px;
+	display: block;
+	display: inline-block;
+	width: 100px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.main a, .hmain a {
+	color: white;
+	background-image: url(../images/collapsed.gif);
+	background-repeat: no-repeat;
+	background-position: 1px center;
+}
+.main li a, .hmain li a {
+	color: black;
+	background-image: none;
+}
+.main ul, .hmain ul {
+	display: none;
+}
+.hmain {
+	float: left;
+	margin-right: 1px;
+}
+body{
+	font-family:cursive;
+	font-size:large;
+	
+	
+}

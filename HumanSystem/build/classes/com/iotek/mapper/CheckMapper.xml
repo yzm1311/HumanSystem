@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iotek.dao.CheckonDao">
+    <resultMap id="checkonMap" type="Checkon">
+        <id property="kid" column="kid"/>
+        <result property="starttime" column="starttime"/>
+        <result property="endtime" column="endtime"/>
+        <result property="gowork_state" column="gowork_state"/>
+        <result property="upwork_state" column="upwork_state"/>
+
+
+        <association property="employee" javaType="Employee">
+            <id property="eid" column="eid"/>
+            <result property="ename" column="ename"/>
+            <result property="sex" column="sex"/>
+            <result property="age" column="age"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="state" column="state"/>
+        </association>
+    </resultMap>
+
+    <select id="getAll" resultMap="checkonMap">
+       select employee.*,checkon.* from checkon,employee where checkon.eid=employee.eid
+    </select>
+
+    <select id="getCheckonByEid" parameterType="int" resultMap="checkonMap">
+        select * from checkon where eid=#{employee.eid}
+    </select>
+
+    <select id="getCheckonByTid" parameterType="int" resultMap="checkonMap">
+        select * from checkon where kid=#{kid}
+    </select>
+
+    <insert id="addChechon" parameterType="Checkon">
+        <selectKey keyProperty="kid" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into checkon values(null,#{starttime},#{endtime},#{gowork_state},#{upwork_state},#{employee.eid})
+    </insert>
+
+    <update id="updateCheckon" parameterType="Checkon">
+        update checkon set endtime=#{endtime},upwork_state=#{upwork_state} where kid=#{kid}
+    </update>
+     <delete id="deleteCheckon" parameterType="Checkon">
+        delete from checkon where eid=#{employee.eid}
+    </delete>
+    
+
+    <select id="getCheckonByParam" parameterType="map" resultMap="checkonMap">
+        select employee.*,checkon.* from checkon,employee where checkon.eid=employee.eid
+        <if test="eid!=null and eid!=''">
+            and employee.eid=#{eid}
+        </if>
+        <if test="month!=null and month!=''">
+            and checkon.starttime like #{month}
+        </if>
+    </select>
+
+</mapper>

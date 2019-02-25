@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iotek.dao.SalaryDao">
+    <resultMap id="salaryMap" type="Salary">
+        <id property="sid" column="sid"/>
+        <result property="basic" column="basic"/>
+        <result property="bonus" column="bonus"/>
+        <result property="social" column="social"/>
+        <result property="punish" column="punish"/>
+        <result property="totalSal" column="totalSal"/>
+        <result property="accountTime" column="accountTime"/>
+
+
+        <association property="employee" javaType="Employee">
+            <id property="eid" column="eid"/>
+            <result property="ename" column="ename"/>
+            <result property="sex" column="sex"/>
+            <result property="age" column="age"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="state" column="state"/>
+        </association>
+    </resultMap>
+
+    <insert id="addSalary" parameterType="Salary">
+        <selectKey keyProperty="sid" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into salary(basic,bonus,social,punish,totalSal,accountTime,eid) values(#{basic},#{bonus},#{social},#{punish},#{totalSal},#{accountTime},#{employee.eid})
+    </insert>
+    <update id="updateSalary" parameterType="Salary">
+        update salary set totalSal=#{totalSal} where sid=#{sid}
+    </update>
+    <select id="getByEid" parameterType="int" resultMap="salaryMap" >
+        select salary.*,employee.* from salary,employee where salary.eid=employee.eid and salary.eid=#{employee.eid}
+    </select>
+    <select id="getBySid" parameterType="int" resultMap="salaryMap" >
+        select salary.*,employee.* from salary,employee where salary.eid=employee.eid and  sid=#{salary.sid}
+    </select>
+    <select id="getAllSalary" resultMap="salaryMap">
+        select * from salary
+    </select>
+    <select id="getSalaryByEidAndMonth" parameterType="map" resultMap="salaryMap">
+        select e.*,s.* from employee e,salary s where e.eid=s.eid
+        <if test="eid!=null and eid!=''">
+            and e.eid=#{eid}
+        </if>
+        <if test="date!=null and date!=''">
+            and accountTime like #{date}
+        </if>
+    </select>
+</mapper>

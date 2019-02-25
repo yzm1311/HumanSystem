@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iotek.dao.ResumeDao">
+    <resultMap id="resumeMap" type="Resume">
+        <id property="rid" column="rid"/>
+        <result property="name" column="name"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="job" column="job"/>
+        <result property="experience" column="experience"/>
+        <result property="studyeffort" column="studyeffort"/>
+        <result property="school" column="school"/>
+        <result property="tel" column="tel"/>
+        <result property="email" column="email"/>
+        <result property="content" column="content"/>
+        <result property="specialty" column="specialty"/>
+        <result property="state" column="state"/>
+        <result property="interview" column="interview"/>
+
+
+        <association property="user" javaType="User">
+            <id property="uid" column="uid"/>
+            <result property="uname" column="uname"/>
+            <result property="upasswd" column="upasswd"/>
+            <result property="state" column="state"/>
+        </association>
+
+        <association property="recruit" javaType="Recruit">
+            <id property="reid" column="reid"/>
+            <result property="rname" column="rname"/>
+            <result property="address" column="address"/>
+            <result property="grantTime" column="grantTime" />
+            <result property="description" column="description"/>
+            <result property="state" column="state"/>
+        </association>
+        <association property="post" javaType="Post">
+            <id property="pid" column="pid"/>
+            <result property="pname" column="pname"/>
+        </association>
+
+    </resultMap>
+
+    <select id="getAllResume" resultMap="resumeMap">
+        select resume.*,recruit.*,post.* from resume,recruit,post where resume.reid=recruit.reid and recruit.pid=post.pid
+    </select>
+    <select id="lookResume" resultMap="resumeMap">
+        select * from resume;
+    </select>
+    <select id="getResumeByUid" parameterType="int" resultMap="resumeMap">
+        select * from resume where uid=#{user.uid}
+    </select>
+    <select id="getResumeByRid" parameterType="int" resultMap="resumeMap">
+        select resume.*,recruit.*,user.* from resume,recruit,user where resume.reid=recruit.reid and resume.uid=user.uid and rid=#{rid}
+    </select>
+    <insert id="addResume" parameterType="Resume">
+        insert into resume(name,sex,age,job,experience,studyeffort,school,tel,email,content,specialty,uid,state,interview)
+        values(#{name},#{sex},#{age},#{job},#{experience},#{studyeffort},#{school},#{tel},#{email},#{content},#{specialty},#{user.uid},4,4)
+    </insert>
+
+    <update id="updateResume" parameterType="Resume">
+        update resume
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="sex!=null and sex!=''">
+                sex=#{sex},
+            </if>
+            <if test="age!=null and age!=''">
+                age=#{age},
+            </if>
+            <if test="job!=null and job!=''">
+                job=#{job},
+            </if>
+            <if test="experience!=null and experience!=''">
+                experience=#{experience},
+            </if>
+            <if test="studyeffort!=null and studyeffort!=''">
+                studyeffort=#{studyeffort},
+            </if>
+            <if test="school!=null and school!=''">
+                school=#{school},
+            </if>
+            <if test="tel!=null and tel!=''">
+                tel=#{tel},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="content!=null and content!=''">
+                content=#{content},
+            </if>
+            
+            <if test="specialty!=null and specialty!=''">
+                specialty=#{specialty},
+            </if>
+            <if test="state!=null and state!=''">
+                state=#{state},
+            </if>
+            <if test="reid!=null and reid!=''">
+                reid=#{reid},
+            </if>
+            <if test="interview!=null and interview!=''">
+                interview=#{interview}
+            </if>
+        </set>
+         where rid=#{rid}
+    </update>
+
+    <delete id="deleteResume" parameterType="int">
+        delete from resume where rid=#{rid}
+    </delete>
+</mapper>

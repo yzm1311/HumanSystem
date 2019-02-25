@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iotek.dao.PostDao">
+    <resultMap id="postMap" type="Post">
+        <id property="pid" column="pid"/>
+        <result property="pname" column="pname"/>
+
+        <association property="dept" javaType="Dept">
+            <id property="did" column="did"/>
+            <result property="dname" column="dname"/>
+        </association>
+    </resultMap>
+
+    <insert id="addPost" parameterType="Post">
+        insert into post(pname,did) values(#{pname},#{dept.did})
+    </insert>
+
+    <delete id="deletePost" parameterType="int">
+        delete from post where pid=#{pid}
+    </delete>
+
+    <update id="updatePost" parameterType="Post">
+        update post set pname=#{pname} where pid=#{pid}
+    </update>
+
+    <select id="getAll" resultMap="postMap">
+        select post.*,dept.* from post,dept where post.did=dept.did
+    </select>
+
+    <select id="getPostByPid" parameterType="int" resultMap="postMap">
+        select post.*,dept.* from post,dept where post.did=dept.did and pid=#{pid}
+    </select>
+
+    <select id="getPostByPname" parameterType="string" resultMap="postMap">
+        select post.*,employee.* from post,employee where 
+        pname = #{pname}
+    </select>
+
+</mapper>

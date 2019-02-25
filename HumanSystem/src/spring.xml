@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       ">
+
+    <!--扫描注解-->
+    <context:component-scan base-package="com.iotek"/>
+
+    <!--启用mvc的注解模式-->
+    <mvc:annotation-driven conversion-service="convertBean">
+        <mvc:message-converters>
+            <ref bean="stringConverter"/>
+            <ref bean="jsonConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--Date类型的自定义转化器-->
+    <bean id="convertBean"
+          class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.iotek.convert.DateConvert"/>
+            </set>
+        </property>
+    </bean>
+    <!--Ajax的格式转化-->
+    <bean id="stringConverter"
+          class="org.springframework.http.converter.StringHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/plain; charset=utf-8</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json; charset=UTF-8</value>
+                <value>application/x-www-form-urlencoded; charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!--springMVC对MyBatis集成-->
+
+    <!--DataSource-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/humansystem?useUnicode=true&amp;characterEncoding=utf-8"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="123456"></property>
+        <!--连接池启动的时候默认创建的连接数量-->
+        <property name="initialPoolSize" value="3"></property>
+        <!--连接池最多可以管理的连接对象个数-->
+        <property name="maxPoolSize" value="100"></property>
+        <!--连接池中最多能够管理的statement对象-->
+        <property name="maxStatements" value="1000"></property>
+        <!--一旦连接池中现有的连接数量不够，每次增长的连接数目：5  ，但是连接池中的连接数量-->
+        <!--最多不可超过maxPoolSize中设置的连接数目-->
+        <property name="acquireIncrement" value="5"></property>
+    </bean>
+
+    <!--Factory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置mapper中使用的实体类别名-->
+        <property name="typeAliasesPackage" value="com.iotek.entity"/>
+        <!--mapper文件的路径-->
+        <property name="mapperLocations" value="classpath*:com/iotek/mapper/**/*.xml"/>
+    </bean>
+
+    <!--
+           Mapper文件所在位置的扫描
+           DAO层位置的确定
+    -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--指定dao接口的位置-->
+        <property name="basePackage" value="com.iotek.dao"/>
+    </bean>
+
+    <!--TransactionManager-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--注解或AOP的方式使用声明式事务-->
+    <tx:annotation-driven transaction-manager="txManager"/>
+</beans>

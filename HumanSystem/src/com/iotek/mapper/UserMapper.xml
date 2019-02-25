@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.iotek.dao.UserDao">
+    <resultMap id="userMap" type="User">
+        <id property="uid" column="uid"/>
+        <result property="uname" column="uname"/>
+        <result property="upasswd" column="upasswd"/>
+        <result property="state" column="state"/>
+
+        <association property="resume" javaType="Resume">
+            <id property="rid" column="rid"/>
+            <result property="name" column="name"/>
+            <result property="sex" column="sex"/>
+            <result property="age" column="age"/>
+            <result property="job" column="job"/>
+            <result property="experience" column="experience"/>
+            <result property="studyeffort" column="studyeffort"/>
+            <result property="school" column="school"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="specialty" column="specialty"/>
+            <result property="content" column="content"/>
+            <result property="state" column="state"/>
+            <result property="interview" column="interview"/>
+        </association>
+
+    </resultMap>
+
+    <select id="getUserByNameAndPwd" parameterType="User" resultMap="userMap">
+        select * from user where uname = #{uname}
+        and upasswd = #{upasswd}
+    </select>
+
+    <select id="getUserByUserName" parameterType="string" resultMap="userMap">
+        select * from user where uname = #{uname}
+    </select>
+    <select id="userInfo" parameterType="int" resultMap="userMap" >
+        select u.*,r.* from user u,resume r where u.uid= r.uid and u.uid=#{uid}
+    </select>
+    <insert id="addUser" parameterType="User">
+        insert into user(uname,upasswd,state) values(#{uname},#{upasswd},0)
+    </insert>
+    <update id="updateStaate" parameterType="User">
+        update user set state=#{state} where  uid=#{uid}
+    </update>
+    <update id="updatepasswordByname" parameterType="User">
+        
+         update `user` set upasswd =#{upasswd} where uname=#{uname}
+     
+    </update>
+  
+    <select id="getAllU" resultMap="userMap">
+    select *from `user`
+    </select>
+    
+    
+</mapper>

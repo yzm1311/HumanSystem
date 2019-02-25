@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iotek.dao.TrainDao">
+    <resultMap id="trainMap" type="Train">
+        <id property="tid" column="tid"/>
+        <result property="tname" column="tname"/>
+        <result property="begintime" column="begintime"/>
+        <result property="endtime" column="endtime"/>
+        <result property="content" column="content"/>
+
+        <collection property="employeeSet" ofType="Employee">
+            <id property="eid" column="eid"/>
+            <result property="ename" column="ename"/>
+            <result property="sex" column="sex"/>
+            <result property="age" column="age"/>
+            <result property="tel" column="tel"/>
+            <result property="email" column="email"/>
+            <result property="state" column="state"/>
+        </collection>
+
+    </resultMap>
+
+    <select id="getAll" resultMap="trainMap">
+        select * from train
+    </select>
+    <select id="lookTrain" resultMap="trainMap">
+        select * from resume;
+    </select>
+    <select id="getTrainByeid" parameterType="int" resultMap="trainMap">
+        select train.*,employee.* from train,employee where train.tid=employee.tid and employee.eid=#{eid}
+    </select>
+
+    <select id="getTrainByTid" parameterType="int" resultMap="trainMap">
+        select * from train where tid=#{tid}
+    </select>
+
+    <select id="getTrainByTname" parameterType="int" resultMap="trainMap">
+        select * from train where tname=#{tname}
+    </select>
+    <select id="getAllByEmployee" resultMap="trainMap">
+         select employee.*,train.* from employee,train where employee.tid=train.tid
+    </select>
+    <insert id="addTrain" parameterType="Train">
+        <selectKey keyProperty="tid" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into train(tname,begintime,endtime,content,state)
+        values(#{tname},#{begintime},#{endtime},#{content},0)
+    </insert>
+
+    <update id="updateTrain" parameterType="Train">
+        update train set state=#{state} where tid=#{tid}
+
+   </update>
+
+    <delete id="deleteTrain" parameterType="int">
+        delete from resume where rid=#{rid}
+    </delete>
+    
+    <delete id="delTrain"  parameterType="int">
+   
+     DELETE FROM train WHERE tid =#{tid}
+    </delete>
+</mapper>

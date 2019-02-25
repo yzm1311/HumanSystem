@@ -1,0 +1,53 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<html>
+<head>
+<title>增加部门界面</title>
+<style type="text/css">
+body {
+	margin-top: 120px;
+	font-family: cursive;
+}
+
+span {
+	font-family: cursive;
+	font-size: x-large;
+}
+</style>
+<script type="text/javascript">
+	//判断是否为空
+	function kong() {
+		alert("a");
+		var name = document.getElementsByName("dname")[0];
+		alert("b");
+		if (name.value.length == 0) {
+			alert(name.value.length == 0);
+			return false;
+		}
+	}
+</script>
+</head>
+<body>
+
+	<form method="post" action="addDept.action" onsubmit=" return kong()">
+		<table width="30%" border="1" align="center" valign="bottom">
+			<tr>
+				<td colspan="2"><span><h>增加部门</h></span></td>
+			</tr>
+			<tr>
+				<td width="40%" align="right">部门名称：</td>
+				<td width="70%" align="left"><input type="text" name="dname" /></td>
+
+			</tr>
+
+			<tr align="center">
+				<td colspan="2" style="padding-right: 80px"><input
+					type="submit" name="Submit" value="添加"> <a href="admin.jsp"><input
+						type="button" value="返回"></a></td>
+			</tr>
+		</table>
+		${same} ${sessionScope.error1}
+
+	</form>
+
+</body>
+</html>

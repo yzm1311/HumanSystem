@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iotek.dao.EmployeeDao">
+    <resultMap id="employeeMap" type="Employee">
+        <id property="eid" column="eid"/>
+        <result property="ename" column="ename"/>
+        <result property="sex" column="sex"/>
+        <result property="age" column="age"/>
+        <result property="tel" column="tel"/>
+        <result property="email" column="email"/>
+        <result property="state" column="state"/>
+
+        <association property="user" javaType="User">
+            <id property="uid" column="uid"/>
+            <result property="uname" column="uname"/>
+            <result property="upasswd" column="upasswd"/>
+            <result property="state" column="state"/>
+        </association>
+
+        <association property="post" javaType="Post">
+            <id property="pid" column="pid"/>
+            <result property="pname" column="pname"/>
+        </association>
+
+        <association property="dept" javaType="Dept">
+            <id property="did" column="did"/>
+            <result property="dname" column="dname"/>
+        </association>
+
+        <association property="train" javaType="Train">
+            <id property="tid" column="tid"/>
+            <result property="tname" column="tname"/>
+            <result property="begintime" column="begintime"/>
+            <result property="endtime" column="endtime"/>
+            <result property="content" column="content"/>
+        </association>
+
+    </resultMap>
+
+    <select id="getAll" resultMap="employeeMap">
+        select employee.*,post.*,dept.* from employee,post,dept where employee.pid=post.pid and employee.did=dept.did
+    </select>
+
+    <select id="getAllByTrain" resultMap="employeeMap">
+        select employee.*,train.* from employee,train where employee.tid=train.tid
+    </select>
+
+    <select id="lookResume" resultMap="employeeMap">
+        select * from resume;
+    </select>
+
+    <select id="getEmployeeByeid" parameterType="int" resultMap="employeeMap">
+        select employee.*,post.*,dept.* from employee,post,dept where employee.pid=post.pid and employee.did=dept.did and eid=#{eid}
+    </select>
+
+    <select id="getEmployeeByPid" parameterType="int" resultMap="employeeMap">
+        select employee.*,post.* from employee,post where employee.pid=post.pid and post.pid=#{post.id}
+    </select>
+
+    <select id="getEmployeeByuid" parameterType="int" resultMap="employeeMap">
+        select * from employee where uid=#{user.uid}
+    </select>
+
+    <select id="getEAndUByeid" parameterType="int" resultMap="employeeMap">
+        select employee.*,user.* from employee,user where employee.uid=user.uid and employee.eid=#{eid}
+    </select>
+  
+    
+     <!-- 查询员工信息 -->
+    <select id="getinfo" parameterType="int" resultMap="employeeMap">
+    SELECT *FROM dept, post ,employee WHERE  
+     employee.pid   =post.`pid`   AND employee.did  = dept.`did`  AND employee.`eid`=#{eid}
+    
+    </select>
+   
+    <select id="getResumeByRid" parameterType="int" resultMap="employeeMap">
+        select * from resume where rid=#{rid}
+    </select>
+
+    <insert id="addEmployee" parameterType="Employee">
+        insert into employee(ename,sex,age,tel,email,state,uid,did,pid)
+        values(#{ename},#{sex},#{age},#{tel},#{email},1,#{user.uid},#{dept.did},#{post.pid})
+    </insert>
+
+    <delete id="deleteResume" parameterType="int">
+        delete from resume where rid=#{rid}
+    </delete>
+    
+    <delete id="deleteEmployee" parameterType="Employee">
+        delete from employee where eid=#{eid}
+    </delete>
+
+    <update id="updateTrain" parameterType="Employee">
+        update employee set tid=#{train.tid} where eid=#{eid}
+    </update>
+
+    <update id="updateEandU" parameterType="Employee">
+        update employee set uid=#{user.uid},state=#{state}  where eid=#{eid}
+    </update>
+
+    <update id="updateEmpInfo" parameterType="Employee">
+    update employee set ename=#{ename},sex=#{sex},age=#{age},tel=#{tel},email=#{email} where eid=#{eid}
+    </update>
+
+    <update id="updateEmployee" parameterType="Employee">
+        update employee set did=#{dept.did},pid=#{post.pid} where eid=#{eid}
+    </update>
+
+</mapper>
